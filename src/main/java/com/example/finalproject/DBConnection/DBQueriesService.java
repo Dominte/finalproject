@@ -13,11 +13,10 @@ public class DBQueriesService {
 
     public void saveUser(RegisterDto user) throws Exception {
         String sql = String.format(
-                "INSERT INTO users(first_name, last_name, email, username, password) VALUES('%s', '%s', '%s', '%s', '%s')",
+                "INSERT INTO users(first_name, last_name,email) VALUES('%s', '%s', %s)",
                 user.getFirstName(),
                 user.getLastName(),
-                user.getUserName(),
-                user.getPassword()
+                user.getEmail()
         );
 
         Statement statement = DBConnection.getConnection().createStatement();

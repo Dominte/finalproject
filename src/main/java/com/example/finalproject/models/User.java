@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Data
@@ -33,7 +34,15 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name="registration_cole", nullable = false,unique = true)
+    private String registrationCode;
+
     private RoleEnum role;
 
+    @ManyToOne(cascade = {CascadeType.ALL})
+    private Test currentTest;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Answer> givenAnswers;
 
 }
