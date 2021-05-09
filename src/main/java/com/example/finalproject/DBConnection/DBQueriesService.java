@@ -7,9 +7,8 @@ import java.sql.Statement;
 
 @Service
 public class DBQueriesService {
-
+//to be deleted
     Statement statement;
-
 
     public void saveUser(RegisterDto user) throws Exception {
         String sql = String.format(

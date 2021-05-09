@@ -19,7 +19,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int index;
+    @Column(name = "question_index")
+    private int questionIndex;
 
     private String text;
 

@@ -34,10 +34,14 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name="registration_cole", nullable = false,unique = true)
+    @Column(name="registration_code", nullable = false,unique = true)
     private String registrationCode;
 
     private RoleEnum role;
+
+    private String password;
+
+    private String username;
 
     @ManyToOne(cascade = {CascadeType.ALL})
     private Test currentTest;
