@@ -2,6 +2,7 @@ package com.example.finalproject.models;
 
 
 import com.example.finalproject.utils.RoleEnum;
+
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.List;
 
 @Builder
@@ -31,6 +33,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Email(message = "Email should be valid")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 

@@ -1,11 +1,14 @@
 package com.example.finalproject.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -26,5 +29,11 @@ public class Test {
     @ManyToOne(cascade = CascadeType.ALL)
     private User teacher;
 
+    @NotNull
+    private String title;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @Column(name = "test_date")
+    private LocalDate testDate;
 
 }
