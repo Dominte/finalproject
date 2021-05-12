@@ -37,6 +37,7 @@ public class UserService {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Registration code is not unique"), HttpStatus.CONFLICT);
         }
 
+
         try {
             User user = User.builder()
                     .firstName(registerDto.getFirstName().trim())
@@ -55,12 +56,18 @@ public class UserService {
 
     }
 
-    ;
 
     @SneakyThrows
     public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto) {
+        if (userRepository.findUserByRegistrationCode(updatePasswordDto.getRegistrationCode()).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student does not exist"), HttpStatus.CONFLICT);
+        }
+        if(!userRepository.findUserByRegistrationCode(updatePasswordDto.getRegistrationCode()).get().getPassword().equals(updatePasswordDto.getPassword())){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Password does not match"), HttpStatus.CONFLICT);
+        }
+
         try {
-            userRepository.setPasswordByRegistrationCode(updatePasswordDto.getRegistrationCode(), updatePasswordDto.getPassword());
+            userRepository.setPasswordByRegistrationCode(updatePasswordDto.getRegistrationCode(), updatePasswordDto.getNewPassword());
             return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Password has been changed successfully"), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);

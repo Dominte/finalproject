@@ -14,4 +14,6 @@ public class UpdatePasswordDto {
     private String registrationCode;
 
     private String password;
+
+    private String newPassword;
 }
