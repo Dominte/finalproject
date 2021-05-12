@@ -29,6 +29,9 @@ public class Test {
     @ManyToOne(cascade = CascadeType.ALL)
     private User teacher;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Question> questions;
+
     @NotNull
     private String title;
 

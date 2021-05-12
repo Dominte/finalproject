@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
+// to be deleted
 
     //DB Credentials
     private static final String USERNAME = "root";

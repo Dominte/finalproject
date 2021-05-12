@@ -19,7 +19,7 @@ import java.util.Locale;
 
 @Service
 public class UserService {
-    
+
     private UserRepository userRepository;
 
     @Autowired
@@ -48,23 +48,25 @@ public class UserService {
                     .password(GeneratePassword.generate(20)).build();
 
             userRepository.save(user);
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED,"User registered successfully"), HttpStatus.CREATED);
-        }
-        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "User registered successfully"), HttpStatus.CREATED);
+        } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
 
-    };
+    }
+
+    ;
 
     @SneakyThrows
-    public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto){
+    public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto) {
         try {
             userRepository.setPasswordByRegistrationCode(updatePasswordDto.getRegistrationCode(), updatePasswordDto.getPassword());
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED,"Password has been changed successfully"), HttpStatus.ACCEPTED);
-        }
-        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Password has been changed successfully"), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
-    };
+    }
+
+    ;
 
 }

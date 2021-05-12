@@ -1,5 +1,6 @@
 package com.example.finalproject.controllers;
 
+import com.example.finalproject.dtos.AssignStudent;
 import com.example.finalproject.dtos.RegisterDto;
 import com.example.finalproject.dtos.ResponseDto;
 import com.example.finalproject.dtos.TestDto;
@@ -29,6 +30,12 @@ public class TestController {
     @SneakyThrows
     public ResponseEntity<ResponseDto> createTest(@RequestBody @Validated TestDto testDto){
         return testService.createTest(testDto);
+    }
+
+    @PostMapping("/assign")
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudent assignStudent){
+        return testService.assignStudentToTest(assignStudent);
     }
 
 }
