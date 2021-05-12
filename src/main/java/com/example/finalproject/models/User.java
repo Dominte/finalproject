@@ -46,10 +46,10 @@ public class User {
 
     private String username;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    private Test currentTest;
+    //@ManyToOne(cascade = {CascadeType.ALL})
+    //private Test currentTest;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Answer> givenAnswers;
+    //@OneToMany(cascade = CascadeType.ALL)
+    //private List<Answer> givenAnswers;
 
 }

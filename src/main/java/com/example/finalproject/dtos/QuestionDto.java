@@ -15,7 +15,5 @@ public class QuestionDto {
 
     private Long testId;
 
-    private int questionIndex;
-
     private String text;
 }

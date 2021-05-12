@@ -19,5 +19,4 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     Optional<Test> findTestByNameAndDate(@Param("title") String title, @Param("test_date") LocalDate test_date);
 
 
-
 }

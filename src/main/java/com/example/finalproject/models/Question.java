@@ -27,6 +27,6 @@ public class Question {
     @ManyToOne(cascade = CascadeType.ALL)
     private Test test;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Answer> answers;
+    //@OneToMany(cascade = CascadeType.ALL)
+    //private List<Answer> answers;
 }

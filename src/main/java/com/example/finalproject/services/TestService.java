@@ -8,19 +8,16 @@ import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.TestRepository;
 import com.example.finalproject.repositories.UserRepository;
 import com.example.finalproject.utils.FormattedDateMatcher;
-import com.example.finalproject.utils.GeneratePassword;
 import lombok.SneakyThrows;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
-import java.sql.SQLOutput;
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class TestService {
@@ -70,6 +67,8 @@ public class TestService {
         }
     }
 
+    @Modifying
+    @Transactional
     @SneakyThrows
     public ResponseEntity<ResponseDto> assignStudentToTest(AssignStudent assignStudent) {
 
@@ -78,15 +77,22 @@ public class TestService {
         if (userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Student does not exist"), HttpStatus.BAD_REQUEST);
         }
+        Test test = testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).get();
+
+        for(int i=0; i < test.getStudents().size();i++){
+            if(test.getStudents().get(i).getRegistrationCode().equals(assignStudent.getStudentRegistrationCode()))
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student already assigned to this test"), HttpStatus.CONFLICT);
+        }
+
+
 
         if (testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "There is no test with this title on that date"), HttpStatus.BAD_REQUEST);
         }
         try {
-            Test test = testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).get();
-
-            ArrayList<User> studentList = new ArrayList<>();
+            ArrayList<User> studentList = new ArrayList<>(test.getStudents());
             studentList.add(userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).get());
+
 
             test.setStudents(studentList);
             testRepository.save(test);

@@ -29,8 +29,10 @@ public class QuestionService {
         }
 
         try {
+            int questionIndex = (questionRepository.findQuestionsByTestId(questionDto.getTestId())) + 1;
+
             Question question = Question.builder()
-                    .questionIndex(questionDto.getQuestionIndex())
+                    .questionIndex(questionIndex)
                     .test(testRepository.findById(questionDto.getTestId()).get())
                     .text(questionDto.getText())
                     .build();

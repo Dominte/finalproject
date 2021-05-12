@@ -23,14 +23,14 @@ public class Test {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<User> students;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private User teacher;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Question> questions;
+   // @OneToMany(cascade = CascadeType.ALL)
+   // private List<Question> questions;
 
     @NotNull
     private String title;
