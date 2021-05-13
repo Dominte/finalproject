@@ -35,6 +35,7 @@ public class Test {
     @NotNull
     private String title;
 
+
     @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "test_date")
     private LocalDate testDate;
