@@ -29,7 +29,7 @@ public class QuestionService {
         }
 
         try {
-            int questionIndex = (questionRepository.findQuestionsByTestId(questionDto.getTestId())) + 1;
+            int questionIndex = (questionRepository.countQuestionsByTestId(questionDto.getTestId())) + 1;
 
             Question question = Question.builder()
                     .questionIndex(questionIndex)

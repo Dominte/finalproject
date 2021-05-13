@@ -21,7 +21,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findQuestionByTestIdAndQuestionIndex(@Param("id") Long id,@Param("question_index") int question_index);
 
     @Query("SELECT count (q) from questions q WHERE q.test.id = :id")
-    int findQuestionsByTestId(@Param("id") Long id);
+    int countQuestionsByTestId(@Param("id") Long id);
 
 
 
