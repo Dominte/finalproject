@@ -1,7 +1,7 @@
 package com.example.finalproject.dtos;
 
 
-import com.example.finalproject.utils.RoleEnum;
+import com.example.finalproject.utils.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +25,6 @@ public class RegisterDto {
 
     private String registrationCode;
 
-    private RoleEnum role;
+    private UserRole role;
 
 }

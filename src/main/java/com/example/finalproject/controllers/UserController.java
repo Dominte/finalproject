@@ -5,7 +5,6 @@ import com.example.finalproject.dtos.ResponseDto;
 import com.example.finalproject.dtos.SuccessDto;
 import com.example.finalproject.dtos.UpdatePasswordDto;
 import com.example.finalproject.services.UserService;
-import com.sun.mail.iap.Response;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,8 +32,12 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseDto> loginUser(@RequestBody @Validated UpdatePasswordDto updatePasswordDto){
+    public ResponseEntity<ResponseDto> modifyPassword(@RequestBody @Validated UpdatePasswordDto updatePasswordDto){
         return userService.modifyPassword(updatePasswordDto);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto> loginUser(){
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "Success"), HttpStatus.OK);
+    }
 }

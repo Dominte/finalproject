@@ -1,7 +1,7 @@
 package com.example.finalproject.models;
 
 
-import com.example.finalproject.utils.RoleEnum;
+import com.example.finalproject.utils.UserRole;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.List;
 
 @Builder
 @Data
@@ -40,7 +39,7 @@ public class User {
     @Column(name="registration_code", nullable = false,unique = true)
     private String registrationCode;
 
-    private RoleEnum role;
+    private UserRole role;
 
     private String password;
 
