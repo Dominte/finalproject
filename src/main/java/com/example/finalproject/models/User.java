@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 
 @Builder
 @Data
@@ -32,7 +31,6 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Email(message = "Email should be valid")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
