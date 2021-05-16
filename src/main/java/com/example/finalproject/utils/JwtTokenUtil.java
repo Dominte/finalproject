@@ -1,16 +1,16 @@
 package com.example.finalproject.utils;
 
+import com.example.finalproject.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -19,12 +19,20 @@ public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
+    private UserRepository userRepository;
+
+    @Autowired
+    public JwtTokenUtil(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Value("${jwt.secret}")
     private String secret;
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
+
 
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
@@ -35,7 +43,20 @@ public class JwtTokenUtil implements Serializable {
         return claimsResolver.apply(claims);
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    public String getRegistrationCodeFromToken(String token){
+        final Claims claims = getAllClaimsFromToken(token);
+        return claims.get("registration_code").toString();
+    }
+
+    public String getRoleFromToken(String token){
+        final Claims claims = getAllClaimsFromToken(token);
+        //TODO botched code
+        ArrayList arrayList = (ArrayList) claims.get("role");
+        LinkedHashMap arrayList1 = (LinkedHashMap) arrayList.get(0);
+        return arrayList1.get("authority").toString();
+    }
+
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
@@ -46,6 +67,8 @@ public class JwtTokenUtil implements Serializable {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", userDetails.getAuthorities());
+        claims.put("registration_code", userRepository.findUserByUsername(userDetails.getUsername()).get().getRegistrationCode());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

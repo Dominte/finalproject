@@ -17,15 +17,12 @@ public class UserController {
 
     private UserService userService;
 
-    private UserServiceSecurity userServiceSecurity;
 
-    private JwtTokenUtil jwtTokenUtil;
+
 
     @Autowired
-    public UserController(JwtTokenUtil jwtTokenUtil,UserService userService,UserServiceSecurity userServiceSecurity) {
-        this.userServiceSecurity = userServiceSecurity;
+    public UserController(UserService userService,UserServiceSecurity userServiceSecurity) {
         this.userService = userService;
-        this.jwtTokenUtil=jwtTokenUtil;
     }
 
 
@@ -37,21 +34,14 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ResponseDto> modifyPassword(@RequestBody @Validated UpdatePasswordDto updatePasswordDto){
-        return userService.modifyPassword(updatePasswordDto);
+    public ResponseEntity<ResponseDto> modifyPassword(@RequestBody @Validated UpdatePasswordDto updatePasswordDto,@RequestHeader (name="Authorization") String token){
+        return userService.modifyPassword(updatePasswordDto,token);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto> loginUser(){
-
-        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "Success"), HttpStatus.OK);
+    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto){
+        return userService.loginUser(loginDto);
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<?> createAuthToken(@RequestBody LoginDto loginDto){
-
-        final String Token = jwtTokenUtil.generateToken(userServiceSecurity.loadUserByUsername(loginDto.getUsername()));
-        return new ResponseEntity<>(new TokenDto(Token),HttpStatus.OK);
-    }
 
 }

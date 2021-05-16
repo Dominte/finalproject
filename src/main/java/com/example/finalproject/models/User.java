@@ -56,6 +56,10 @@ public class User implements UserDetails {
         return grantedAuthorities;
     }
 
+    public String getRegistrationCode(){
+        return this.registrationCode;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return false;
@@ -76,10 +80,5 @@ public class User implements UserDetails {
         return false;
     }
 
-    //@ManyToOne(cascade = {CascadeType.ALL})
-    //private Test currentTest;
-
-    //@OneToMany(cascade = CascadeType.ALL)
-    //private List<Answer> givenAnswers;
 
 }
