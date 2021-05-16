@@ -1,10 +1,9 @@
 package com.example.finalproject.controllers;
 
-import com.example.finalproject.dtos.RegisterDto;
-import com.example.finalproject.dtos.ResponseDto;
-import com.example.finalproject.dtos.SuccessDto;
-import com.example.finalproject.dtos.UpdatePasswordDto;
+import com.example.finalproject.dtos.*;
 import com.example.finalproject.services.UserService;
+import com.example.finalproject.services.UserServiceSecurity;
+import com.example.finalproject.utils.JwtTokenUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +17,18 @@ public class UserController {
 
     private UserService userService;
 
+    private UserServiceSecurity userServiceSecurity;
+
+    private JwtTokenUtil jwtTokenUtil;
+
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(JwtTokenUtil jwtTokenUtil,UserService userService,UserServiceSecurity userServiceSecurity) {
+        this.userServiceSecurity = userServiceSecurity;
         this.userService = userService;
+        this.jwtTokenUtil=jwtTokenUtil;
     }
+
+
 
     @PostMapping("/register")
     @SneakyThrows
@@ -36,6 +43,15 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDto> loginUser(){
+
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "Success"), HttpStatus.OK);
     }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<?> createAuthToken(@RequestBody LoginDto loginDto){
+
+        final String Token = jwtTokenUtil.generateToken(userServiceSecurity.loadUserByUsername(loginDto.getUsername()));
+        return new ResponseEntity<>(new TokenDto(Token),HttpStatus.OK);
+    }
+
 }
