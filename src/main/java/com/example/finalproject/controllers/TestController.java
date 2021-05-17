@@ -10,10 +10,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/test")
@@ -28,8 +25,8 @@ public class TestController {
 
     @PostMapping("/create")
     @SneakyThrows
-    public ResponseEntity<ResponseDto> createTest(@RequestBody @Validated TestDto testDto){
-        return testService.createTest(testDto);
+    public ResponseEntity<ResponseDto> createTest(@RequestBody @Validated TestDto testDto,@RequestHeader(name="Authorization") String token){
+        return testService.createTest(testDto,token);
     }
 
     @PostMapping("/assign")

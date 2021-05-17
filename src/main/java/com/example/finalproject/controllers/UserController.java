@@ -25,8 +25,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
-
     @PostMapping("/register")
     @SneakyThrows
     public ResponseEntity<ResponseDto> registerUser(@RequestBody @Validated RegisterDto registerDto){

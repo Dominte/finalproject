@@ -8,6 +8,7 @@ import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.TestRepository;
 import com.example.finalproject.repositories.UserRepository;
 import com.example.finalproject.utils.FormattedDateMatcher;
+import com.example.finalproject.utils.JwtTokenUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,17 +25,21 @@ public class TestService {
 
     private TestRepository testRepository;
     private UserRepository userRepository;
+    private JwtTokenUtil jwtTokenUtil;
     private final FormattedDateMatcher dateMatcher = new FormattedDateMatcher();
 
     @Autowired
-    public TestService(TestRepository testRepository, UserRepository userRepository) {
+    public TestService(TestRepository testRepository, JwtTokenUtil jwtTokenUtil, UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
         this.testRepository = testRepository;
     }
 
     @SneakyThrows
-    public ResponseEntity<ResponseDto> createTest(TestDto testDto) {
-        if (userRepository.findUserByRegistrationCode(testDto.getTeacherRegistrationCode()).isEmpty()) {
+    public ResponseEntity<ResponseDto> createTest(TestDto testDto, String token) {
+        token = token.substring(7);
+
+        if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Teacher does not exist"), HttpStatus.BAD_REQUEST);
         }
 
@@ -53,7 +58,7 @@ public class TestService {
         try {
             Test test;
             test = Test.builder()
-                    .teacher(userRepository.findUserByRegistrationCode(testDto.getTeacherRegistrationCode()).get())
+                    .teacher(userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get())
                     .title(testDto.getTitle())
                     .testDate(LocalDate.parse(testDto.getTestDay()))
                     .build();
@@ -72,18 +77,15 @@ public class TestService {
     @SneakyThrows
     public ResponseEntity<ResponseDto> assignStudentToTest(AssignStudent assignStudent) {
 
-        // To be fixed, nested tables err
-
         if (userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Student does not exist"), HttpStatus.BAD_REQUEST);
         }
         Test test = testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).get();
 
-        for(int i=0; i < test.getStudents().size();i++){
-            if(test.getStudents().get(i).getRegistrationCode().equals(assignStudent.getStudentRegistrationCode()))
+        for (int i = 0; i < test.getStudents().size(); i++) {
+            if (test.getStudents().get(i).getRegistrationCode().equals(assignStudent.getStudentRegistrationCode()))
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student already assigned to this test"), HttpStatus.CONFLICT);
         }
-
 
 
         if (testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).isEmpty()) {

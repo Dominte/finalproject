@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
                 .authorizeRequests().antMatchers("/v1/user/login").permitAll()
                 .antMatchers("/v1/user/register").hasAuthority("ADMIN")
                 .antMatchers("/v1/user/update").access("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
+                .antMatchers("/v1/test/create").hasAuthority("TEACHER")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

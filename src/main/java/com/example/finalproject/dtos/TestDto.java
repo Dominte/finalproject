@@ -14,8 +14,6 @@ import java.time.LocalDate;
 @Data
 public class TestDto {
 
-    private String teacherRegistrationCode;
-
     private String title;
 
     private String testDay;
