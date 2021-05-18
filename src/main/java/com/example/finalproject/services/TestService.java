@@ -97,6 +97,18 @@ public class TestService {
                     .testDate(LocalDate.parse(testDto.getTestDate()))
                     .build();
 
+            if (testDto.getDuration() != null) {
+                if (!updateTestDuration(testDto.getDuration(), test)) {
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Duration format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            if (testDto.getStartingHour() != null) {
+                if (!updateTestDuration(testDto.getDuration(), test)) {
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Starting hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+                }
+            }
+
             testRepository.save(test);
 
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "Test created"), HttpStatus.CREATED);
@@ -122,20 +134,23 @@ public class TestService {
 
 
         if (updateTestDto.getNewDuration() != null) {
-            if (!updateTestDuration(updateTestDto, test)) {
+            if (!updateTestDuration(updateTestDto.getNewDuration(), test)) {
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Duration format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
             }
         }
         if (updateTestDto.getNewStartingHour() != null) {
-            if (!updateTestStartingHour(updateTestDto, test)) {
+            if (!updateTestStartingHour(updateTestDto.getNewStartingHour(), test)) {
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Starting hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
             }
         }
         if (updateTestDto.getNewTestDate() != null) {
-            if (LocalDate.parse(updateTestDto.getNewTestDate()).compareTo(LocalDate.now()) < 0) {
-                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
+            if (!dateMatcher.matches(updateTestDto.getNewTestDate())) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
             }
-            if (!updateTestDate(updateTestDto, test)) {
+            if (LocalDate.parse(updateTestDto.getNewTestDate()).compareTo(LocalDate.now()) < 0) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Cannot set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
+            }
+            if (!updateTestDate(updateTestDto.getNewTestDate(), test)) {
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
             }
         }
@@ -148,15 +163,13 @@ public class TestService {
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "A test with this title already exists on that date"), HttpStatus.BAD_REQUEST);
             }
 
-            if (!updateTestTitle(updateTestDto, test)) {
-                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Title "), HttpStatus.BAD_REQUEST);
+            if (!updateTestTitle(updateTestDto.getNewTitle(), test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test title couldn't be added"), HttpStatus.BAD_REQUEST);
             }
         }
 
         testRepository.save(test);
         return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Test updated"), HttpStatus.ACCEPTED);
-
-
     }
 
     @Modifying
@@ -193,36 +206,36 @@ public class TestService {
         }
     }
 
-    private boolean updateTestDuration(UpdateTestDto updateTestDto, Test test) {
+    private boolean updateTestDuration(String duration, Test test) {
         try {
-            test.setDuration(LocalTime.parse(updateTestDto.getNewDuration()));
+            test.setDuration(LocalTime.parse(duration));
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    private boolean updateTestStartingHour(UpdateTestDto updateTestDto, Test test) {
+    private boolean updateTestStartingHour(String startingHour, Test test) {
         try {
-            test.setStartingHour(LocalTime.parse(updateTestDto.getNewStartingHour()));
+            test.setStartingHour(LocalTime.parse(startingHour));
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    private boolean updateTestDate(UpdateTestDto updateTestDto, Test test) {
+    private boolean updateTestDate(String testDate, Test test) {
         try {
-            test.setTestDate(LocalDate.parse(updateTestDto.getNewTestDate()));
+            test.setTestDate(LocalDate.parse(testDate));
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
-    private boolean updateTestTitle(UpdateTestDto updateTestDto, Test test) {
+    private boolean updateTestTitle(String testTitle, Test test) {
         try {
-            test.setTitle(updateTestDto.getNewTitle());
+            test.setTitle(testTitle);
             return true;
         } catch (Exception e) {
             return false;

@@ -18,4 +18,8 @@ public class TestDto {
 
     private String testDate;
 
+    private String startingHour;
+
+    private String duration;
+
 }
