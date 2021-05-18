@@ -76,6 +76,7 @@ public class UserService {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
         }
 
+
         try {
 
             User user = userRepository.findById(userId).get();

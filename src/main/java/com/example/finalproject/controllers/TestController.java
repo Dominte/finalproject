@@ -29,6 +29,12 @@ public class TestController {
         return testService.createTest(testDto,token);
     }
 
+    @GetMapping("/created")
+    @SneakyThrows
+    public ResponseEntity<?> getCreatedTests(@RequestHeader(name="Authorization") String token){
+        return testService.getCreatedTests(token);
+    }
+
     @PostMapping("/assign")
     @SneakyThrows
     public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudent assignStudent){

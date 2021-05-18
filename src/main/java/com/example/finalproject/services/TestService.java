@@ -1,9 +1,6 @@
 package com.example.finalproject.services;
 
-import com.example.finalproject.dtos.AssignStudent;
-import com.example.finalproject.dtos.ResponseDto;
-import com.example.finalproject.dtos.TestDto;
-import com.example.finalproject.dtos.UpdateTestDto;
+import com.example.finalproject.dtos.*;
 import com.example.finalproject.models.Test;
 import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.TestRepository;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TestService {
@@ -37,6 +35,43 @@ public class TestService {
     }
 
     @SneakyThrows
+    public ResponseEntity<?> getCreatedTests(String token){
+        token=token.substring(7);
+
+        if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Teacher does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        try{
+            User teacher = userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get();
+            List<Test> dbTests = testRepository.findAllByTeacherId(teacher.getId());
+
+            List<CreatedTestDto> tests = new ArrayList<>();
+
+            for (Test dbTest : dbTests) {
+                CreatedTestDto createdTestDto = new CreatedTestDto();
+
+                createdTestDto.setTestDate(dbTest.getTestDate());
+                createdTestDto.setTitle(dbTest.getTitle());
+                createdTestDto.setDuration(dbTest.getDuration());
+                createdTestDto.setStartingHour(dbTest.getStartingHour());
+
+                
+
+
+                tests.add(createdTestDto);
+            }
+
+            return new ResponseEntity<>(tests,HttpStatus.ACCEPTED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+
+    @SneakyThrows
     public ResponseEntity<ResponseDto> createTest(TestDto testDto, String token) {
         token = token.substring(7);
 
@@ -44,15 +79,15 @@ public class TestService {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Teacher does not exist"), HttpStatus.BAD_REQUEST);
         }
 
-        if (!dateMatcher.matches(testDto.getTestDay())) {
+        if (!dateMatcher.matches(testDto.getTestDate())) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
         }
 
-        if (testRepository.findTestByNameAndDate(testDto.getTitle(), LocalDate.parse(testDto.getTestDay())).isPresent()) {
+        if (testRepository.findTestByNameAndDate(testDto.getTitle(), LocalDate.parse(testDto.getTestDate())).isPresent()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Test already exists on that date"), HttpStatus.CONFLICT);
         }
 
-        if (LocalDate.parse(testDto.getTestDay()).compareTo(LocalDate.now()) < 0) {
+        if (LocalDate.parse(testDto.getTestDate()).compareTo(LocalDate.now()) < 0) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
         }
 
@@ -61,7 +96,7 @@ public class TestService {
             test = Test.builder()
                     .teacher(userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get())
                     .title(testDto.getTitle())
-                    .testDate(LocalDate.parse(testDto.getTestDay()))
+                    .testDate(LocalDate.parse(testDto.getTestDate()))
                     .build();
 
             testRepository.save(test);
