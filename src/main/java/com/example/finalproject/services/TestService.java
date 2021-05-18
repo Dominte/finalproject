@@ -3,6 +3,7 @@ package com.example.finalproject.services;
 import com.example.finalproject.dtos.AssignStudent;
 import com.example.finalproject.dtos.ResponseDto;
 import com.example.finalproject.dtos.TestDto;
+import com.example.finalproject.dtos.UpdateTestDto;
 import com.example.finalproject.models.Test;
 import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.TestRepository;
@@ -71,6 +72,36 @@ public class TestService {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
     }
+
+    public ResponseEntity<ResponseDto> updateTest(UpdateTestDto updateTestDto,String token){
+
+        if (testRepository.findById(updateTestDto.getTestId()).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        if (!testRepository.findById(updateTestDto.getTestId()).get().getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "You do not own this test"), HttpStatus.CONFLICT);
+        }
+
+        if(updateTestDto.getNewDuration().isEmpty()){
+            System.out.println("");
+        }
+
+        try {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "Test created"), HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @SneakyThrows
+    public void updateTestDuration(UpdateTestDto updateTestDto,String token){
+        token=token.substring(7);
+
+    }
+
+
 
     @Modifying
     @Transactional

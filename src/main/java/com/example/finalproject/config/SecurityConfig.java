@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter  {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
@@ -31,8 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
     private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,UserServiceSecurity userServiceSecurity,JwtRequestFilter jwtRequestFilter){
-        this.jwtAuthenticationEntryPoint =jwtAuthenticationEntryPoint;
+    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, UserServiceSecurity userServiceSecurity, JwtRequestFilter jwtRequestFilter) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.userServiceSecurity = userServiceSecurity;
         this.jwtRequestFilter = jwtRequestFilter;
     }
@@ -64,6 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
                 .antMatchers("/v1/user/register").hasAuthority("ADMIN")
                 .antMatchers("/v1/user/update/password").access("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
                 .antMatchers("/v1/user/update/role").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/v1/user").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET,"/v1/user").access("hasAuthority('ADMIN') or hasAuthority('TEACHER')")
                 .antMatchers("/v1/test/create").hasAuthority("TEACHER")
                 .antMatchers("/v1/question/add").hasAuthority("TEACHER")
                 .anyRequest().authenticated().and()

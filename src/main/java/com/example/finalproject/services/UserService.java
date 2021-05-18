@@ -70,6 +70,55 @@ public class UserService {
 
     }
 
+    @SneakyThrows
+    public ResponseEntity<?> getUser(Long userId){
+        if (userRepository.findById(userId).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
+        }
+
+        try {
+
+            User user = userRepository.findById(userId).get();
+
+            UserDto userDto = UserDto.builder()
+                    .email(user.getEmail())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .username(user.getUsername())
+                    .registrationCode(user.getRegistrationCode())
+                    .build();
+
+            return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> deleteUser(Long userId, String token) {
+        token = token.substring(7);
+
+        if (userRepository.findById(userId).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
+        }
+
+        if (userRepository.findById(userId).get().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Cannot delete your own account"), HttpStatus.CONFLICT);
+        }
+
+        try {
+
+            User user = userRepository.findById(userId).get();
+            userRepository.delete(user);
+
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "User deleted successfully"), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     @SneakyThrows
     public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto, String token) {

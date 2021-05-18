@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Builder
@@ -29,12 +30,16 @@ public class Test {
     @ManyToOne(cascade = CascadeType.ALL)
     private User teacher;
 
-   // @OneToMany(cascade = CascadeType.ALL)
-   // private List<Question> questions;
-
     @NotNull
     private String title;
 
+    @JsonFormat(pattern = "HH:mm:ss")
+    @Column(name= "starting_hour")
+    private LocalTime startingHour;
+
+    @JsonFormat(pattern = "HH:mm:ss")
+    @Column(name = "duration")
+    private LocalTime duration;
 
     @JsonFormat(pattern="yyyy-MM-dd")
     @Column(name = "test_date")
