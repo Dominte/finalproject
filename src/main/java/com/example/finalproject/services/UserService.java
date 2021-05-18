@@ -6,6 +6,7 @@ import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.UserRepository;
 import com.example.finalproject.utils.GeneratePassword;
 import com.example.finalproject.utils.JwtTokenUtil;
+import com.example.finalproject.utils.UserRole;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -71,8 +72,8 @@ public class UserService {
 
 
     @SneakyThrows
-    public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto,String token) {
-        token=token.substring(7);
+    public ResponseEntity<ResponseDto> modifyPassword(UpdatePasswordDto updatePasswordDto, String token) {
+        token = token.substring(7);
 
         if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student does not exist"), HttpStatus.CONFLICT);
@@ -108,5 +109,26 @@ public class UserService {
 
     }
 
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> modifyRole(UpdateRoleDto updateRoleDto) {
+        if (userRepository.findUserByRegistrationCode(updateRoleDto.getRegistrationCode()).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
+        }
 
+        for (UserRole role : UserRole.values()) {
+            if (role.equals(updateRoleDto.getRole())) {
+                try {
+                    User user = userRepository.findUserByRegistrationCode(updateRoleDto.getRegistrationCode()).get();
+                    user.setRole(updateRoleDto.getRole());
+
+                    userRepository.save(user);
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Role has been changed successfully"), HttpStatus.ACCEPTED);
+                } catch (Exception e) {
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+                }
+
+            }
+        }
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Role cannot be unspecified or have another value than: ADMIN, STUDENT, TEACHER"), HttpStatus.BAD_REQUEST);
+    }
 }

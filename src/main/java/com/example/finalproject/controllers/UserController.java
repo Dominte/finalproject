@@ -31,9 +31,14 @@ public class UserController {
         return userService.registerUser(registerDto);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/password")
     public ResponseEntity<ResponseDto> modifyPassword(@RequestBody @Validated UpdatePasswordDto updatePasswordDto,@RequestHeader (name="Authorization") String token){
         return userService.modifyPassword(updatePasswordDto,token);
+    }
+
+    @PutMapping("/update/role")
+    public ResponseEntity<ResponseDto> modifyRole(@RequestBody @Validated UpdateRoleDto updateRoleDto){
+        return userService.modifyRole(updateRoleDto);
     }
 
     @PostMapping("/login")

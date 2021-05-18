@@ -62,12 +62,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter  {
         httpSecurity.csrf().disable()
                 .authorizeRequests().antMatchers("/v1/user/login").permitAll()
                 .antMatchers("/v1/user/register").hasAuthority("ADMIN")
-                .antMatchers("/v1/user/update").access("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
+                .antMatchers("/v1/user/update/password").access("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
+                .antMatchers("/v1/user/update/role").hasAuthority("ADMIN")
                 .antMatchers("/v1/test/create").hasAuthority("TEACHER")
+                .antMatchers("/v1/question/add").hasAuthority("TEACHER")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
