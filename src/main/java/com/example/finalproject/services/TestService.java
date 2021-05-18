@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +37,14 @@ public class TestService {
     }
 
     @SneakyThrows
-    public ResponseEntity<?> getCreatedTests(String token){
-        token=token.substring(7);
+    public ResponseEntity<?> getCreatedTests(String token) {
+        token = token.substring(7);
 
         if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Teacher does not exist"), HttpStatus.BAD_REQUEST);
         }
 
-        try{
+        try {
             User teacher = userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get();
             List<Test> dbTests = testRepository.findAllByTeacherId(teacher.getId());
 
@@ -56,15 +58,11 @@ public class TestService {
                 createdTestDto.setDuration(dbTest.getDuration());
                 createdTestDto.setStartingHour(dbTest.getStartingHour());
 
-                
-
-
                 tests.add(createdTestDto);
             }
 
-            return new ResponseEntity<>(tests,HttpStatus.ACCEPTED);
-        }
-        catch (Exception e){
+            return new ResponseEntity<>(tests, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
 
@@ -108,35 +106,58 @@ public class TestService {
         }
     }
 
-    public ResponseEntity<ResponseDto> updateTest(UpdateTestDto updateTestDto,String token){
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> updateTest(UpdateTestDto updateTestDto, String token) {
+        token = token.substring(7);
 
         if (testRepository.findById(updateTestDto.getTestId()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
         }
 
+        Test test = testRepository.findById(updateTestDto.getTestId()).get();
+
         if (!testRepository.findById(updateTestDto.getTestId()).get().getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "You do not own this test"), HttpStatus.CONFLICT);
         }
 
-        if(updateTestDto.getNewDuration().isEmpty()){
-            System.out.println("");
+
+        if (updateTestDto.getNewDuration() != null) {
+            if (!updateTestDuration(updateTestDto, test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Duration format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (updateTestDto.getNewStartingHour() != null) {
+            if (!updateTestStartingHour(updateTestDto, test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Starting hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (updateTestDto.getNewTestDate() != null) {
+            if (LocalDate.parse(updateTestDto.getNewTestDate()).compareTo(LocalDate.now()) < 0) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
+            }
+            if (!updateTestDate(updateTestDto, test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (updateTestDto.getNewTitle() != null) {
+            if (updateTestDto.getNewTestDate() != null) {
+                if (testRepository.findTestByNameAndDate(updateTestDto.getNewTitle(), LocalDate.parse(updateTestDto.getNewTestDate())).isPresent()) {
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "A test with this title already exists on that date"), HttpStatus.BAD_REQUEST);
+                }
+            } else if (testRepository.findTestByNameAndDate(updateTestDto.getNewTitle(), test.getTestDate()).isPresent()) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "A test with this title already exists on that date"), HttpStatus.BAD_REQUEST);
+            }
+
+            if (!updateTestTitle(updateTestDto, test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Title "), HttpStatus.BAD_REQUEST);
+            }
         }
 
-        try {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "Test created"), HttpStatus.CREATED);
+        testRepository.save(test);
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Test updated"), HttpStatus.ACCEPTED);
 
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @SneakyThrows
-    public void updateTestDuration(UpdateTestDto updateTestDto,String token){
-        token=token.substring(7);
 
     }
-
-
 
     @Modifying
     @Transactional
@@ -169,6 +190,42 @@ public class TestService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private boolean updateTestDuration(UpdateTestDto updateTestDto, Test test) {
+        try {
+            test.setDuration(LocalTime.parse(updateTestDto.getNewDuration()));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean updateTestStartingHour(UpdateTestDto updateTestDto, Test test) {
+        try {
+            test.setStartingHour(LocalTime.parse(updateTestDto.getNewStartingHour()));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean updateTestDate(UpdateTestDto updateTestDto, Test test) {
+        try {
+            test.setTestDate(LocalDate.parse(updateTestDto.getNewTestDate()));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean updateTestTitle(UpdateTestDto updateTestDto, Test test) {
+        try {
+            test.setTitle(updateTestDto.getNewTitle());
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

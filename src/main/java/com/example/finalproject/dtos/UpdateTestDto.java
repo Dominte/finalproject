@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Builder
@@ -17,7 +18,7 @@ public class UpdateTestDto {
 
     private String newTitle;
 
-    private String newTestDay;
+    private String newTestDate;
 
     private String newStartingHour;
 

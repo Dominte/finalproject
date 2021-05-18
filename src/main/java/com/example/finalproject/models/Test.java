@@ -33,11 +33,11 @@ public class Test {
     @NotNull
     private String title;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     @Column(name= "starting_hour")
     private LocalTime startingHour;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     @Column(name = "duration")
     private LocalTime duration;
 

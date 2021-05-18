@@ -1,9 +1,6 @@
 package com.example.finalproject.controllers;
 
-import com.example.finalproject.dtos.AssignStudent;
-import com.example.finalproject.dtos.RegisterDto;
-import com.example.finalproject.dtos.ResponseDto;
-import com.example.finalproject.dtos.TestDto;
+import com.example.finalproject.dtos.*;
 import com.example.finalproject.services.TestService;
 import com.example.finalproject.services.UserService;
 import lombok.SneakyThrows;
@@ -25,20 +22,26 @@ public class TestController {
 
     @PostMapping("/create")
     @SneakyThrows
-    public ResponseEntity<ResponseDto> createTest(@RequestBody @Validated TestDto testDto,@RequestHeader(name="Authorization") String token){
-        return testService.createTest(testDto,token);
+    public ResponseEntity<ResponseDto> createTest(@RequestBody @Validated TestDto testDto, @RequestHeader(name = "Authorization") String token) {
+        return testService.createTest(testDto, token);
     }
 
     @GetMapping("/created")
     @SneakyThrows
-    public ResponseEntity<?> getCreatedTests(@RequestHeader(name="Authorization") String token){
+    public ResponseEntity<?> getCreatedTests(@RequestHeader(name = "Authorization") String token) {
         return testService.getCreatedTests(token);
     }
 
     @PostMapping("/assign")
     @SneakyThrows
-    public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudent assignStudent){
+    public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudent assignStudent) {
         return testService.assignStudentToTest(assignStudent);
+    }
+
+    @PutMapping("/update")
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> updateTest(@RequestBody @Validated UpdateTestDto updateTestDto, @RequestHeader(name = "Authorization") String token) {
+        return testService.updateTest(updateTestDto, token);
     }
 
 }
