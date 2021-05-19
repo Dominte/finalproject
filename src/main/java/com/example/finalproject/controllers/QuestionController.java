@@ -29,6 +29,11 @@ public class QuestionController {
         return questionService.addQuestionToTest(questionDto, token);
     }
 
+    @GetMapping("")
+    @SneakyThrows
+    public ResponseEntity<?> getUser(@RequestParam Long testId) {
+        return questionService.getQuestionsFromTest(testId);
+    }
 
 
 }
