@@ -172,6 +172,31 @@ public class TestService {
         return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Test updated"), HttpStatus.ACCEPTED);
     }
 
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> signupToTest(SignupTestDto signupTestDto, String token) {
+        token=token.substring(7);
+
+        if(testRepository.findById(signupTestDto.getTestId()).isEmpty()){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            User user = userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get();
+            Test test = testRepository.findById(signupTestDto.getTestId()).get();
+
+            ArrayList<User> studentList = new ArrayList<>(test.getStudents());
+            studentList.add(user);
+
+            test.setStudents(studentList);
+            testRepository.save(test);
+
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Signed up successfully"), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @Modifying
     @Transactional
     @SneakyThrows
@@ -194,7 +219,6 @@ public class TestService {
         try {
             ArrayList<User> studentList = new ArrayList<>(test.getStudents());
             studentList.add(userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).get());
-
 
             test.setStudents(studentList);
             testRepository.save(test);

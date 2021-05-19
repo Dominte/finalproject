@@ -38,6 +38,12 @@ public class TestController {
         return testService.assignStudentToTest(assignStudent);
     }
 
+    @PostMapping("/signup")
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> signupToTest(@RequestBody @Validated SignupTestDto signupTestDto, @RequestHeader(name = "Authorization") String token) {
+        return testService.signupToTest(signupTestDto,token);
+    }
+
     @PutMapping("/update")
     @SneakyThrows
     public ResponseEntity<ResponseDto> updateTest(@RequestBody @Validated UpdateTestDto updateTestDto, @RequestHeader(name = "Authorization") String token) {

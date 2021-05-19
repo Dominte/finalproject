@@ -31,7 +31,7 @@ public class QuestionController {
 
     @GetMapping("")
     @SneakyThrows
-    public ResponseEntity<?> getUser(@RequestParam Long testId) {
+    public ResponseEntity<?> getQuestionsFromTest(@RequestParam Long testId) {
         return questionService.getQuestionsFromTest(testId);
     }
 

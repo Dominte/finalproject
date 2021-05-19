@@ -70,6 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v1/question/add").hasAuthority("TEACHER")
                 .antMatchers("/v1/test/created").hasAuthority("TEACHER")
                 .antMatchers("/v1/test/update").hasAuthority("TEACHER")
+                .antMatchers("/v1/test/signup").hasAuthority("STUDENT")
                 .antMatchers(HttpMethod.GET, "/v1/question").access("hasAuthority('STUDENT') or hasAuthority('TEACHER') ")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
