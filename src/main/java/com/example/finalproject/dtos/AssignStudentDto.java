@@ -8,11 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AssignStudent {
+public class AssignStudentDto {
 
-    private String testTitle;
+    private Long testId;
 
     private String studentRegistrationCode;
 
-    private String testDay;
 }

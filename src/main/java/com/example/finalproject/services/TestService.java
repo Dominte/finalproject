@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,9 +173,9 @@ public class TestService {
 
     @SneakyThrows
     public ResponseEntity<ResponseDto> signupToTest(SignupTestDto signupTestDto, String token) {
-        token=token.substring(7);
+        token = token.substring(7);
 
-        if(testRepository.findById(signupTestDto.getTestId()).isEmpty()){
+        if (testRepository.findById(signupTestDto.getTestId()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
         }
 
@@ -200,25 +199,31 @@ public class TestService {
     @Modifying
     @Transactional
     @SneakyThrows
-    public ResponseEntity<ResponseDto> assignStudentToTest(AssignStudent assignStudent) {
+    public ResponseEntity<ResponseDto> assignStudentToTest(AssignStudentDto assignStudentDto, String token) {
+        token=token.substring(7);
 
-        if (userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).isEmpty()) {
+        if (userRepository.findUserByRegistrationCode(assignStudentDto.getStudentRegistrationCode()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Student does not exist"), HttpStatus.BAD_REQUEST);
         }
-        Test test = testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).get();
+
+        if (testRepository.findById(assignStudentDto.getTestId()).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        Test test = testRepository.findById(assignStudentDto.getTestId()).get();
+
+        if (test.getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "You do not own this test"), HttpStatus.BAD_REQUEST);
+        }
 
         for (int i = 0; i < test.getStudents().size(); i++) {
-            if (test.getStudents().get(i).getRegistrationCode().equals(assignStudent.getStudentRegistrationCode()))
+            if (test.getStudents().get(i).getRegistrationCode().equals(assignStudentDto.getStudentRegistrationCode()))
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student already assigned to this test"), HttpStatus.CONFLICT);
         }
 
-
-        if (testRepository.findTestByNameAndDate(assignStudent.getTestTitle(), LocalDate.parse(assignStudent.getTestDay())).isEmpty()) {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "There is no test with this title on that date"), HttpStatus.BAD_REQUEST);
-        }
         try {
             ArrayList<User> studentList = new ArrayList<>(test.getStudents());
-            studentList.add(userRepository.findUserByRegistrationCode(assignStudent.getStudentRegistrationCode()).get());
+            studentList.add(userRepository.findUserByRegistrationCode(assignStudentDto.getStudentRegistrationCode()).get());
 
             test.setStudents(studentList);
             testRepository.save(test);

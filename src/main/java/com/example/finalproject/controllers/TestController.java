@@ -2,7 +2,6 @@ package com.example.finalproject.controllers;
 
 import com.example.finalproject.dtos.*;
 import com.example.finalproject.services.TestService;
-import com.example.finalproject.services.UserService;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +33,8 @@ public class TestController {
 
     @PostMapping("/assign")
     @SneakyThrows
-    public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudent assignStudent) {
-        return testService.assignStudentToTest(assignStudent);
+    public ResponseEntity<ResponseDto> assignStudentToTest(@RequestBody @Validated AssignStudentDto assignStudentDto,@RequestHeader(name = "Authorization") String token) {
+        return testService.assignStudentToTest(assignStudentDto, token);
     }
 
     @PostMapping("/signup")
