@@ -22,5 +22,5 @@ public class UpdateTestDto {
 
     private String newStartingHour;
 
-    private String newDuration;
+    private String newFinishingHour;
 }

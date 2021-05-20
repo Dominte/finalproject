@@ -19,7 +19,7 @@ public class CreatedTestDto {
 
     private LocalDate testDate;
 
-    private LocalTime duration;
+    private LocalTime finishingHour;
 
     private LocalTime startingHour;
 

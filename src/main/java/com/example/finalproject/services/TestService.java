@@ -55,7 +55,7 @@ public class TestService {
 
                 createdTestDto.setTestDate(dbTest.getTestDate());
                 createdTestDto.setTitle(dbTest.getTitle());
-                createdTestDto.setDuration(dbTest.getDuration());
+                createdTestDto.setFinishingHour(dbTest.getFinishingHour());
                 createdTestDto.setStartingHour(dbTest.getStartingHour());
 
                 tests.add(createdTestDto);
@@ -97,14 +97,14 @@ public class TestService {
                     .testDate(LocalDate.parse(testDto.getTestDate()))
                     .build();
 
-            if (testDto.getDuration() != null) {
-                if (!updateTestDuration(testDto.getDuration(), test)) {
-                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Duration format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+            if (testDto.getFinishingHour() != null) {
+                if (!updateFinishingHour(testDto.getFinishingHour(), test)) {
+                    return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Finishing hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
                 }
             }
 
             if (testDto.getStartingHour() != null) {
-                if (!updateTestDuration(testDto.getDuration(), test)) {
+                if (!updateFinishingHour(testDto.getFinishingHour(), test)) {
                     return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Starting hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
                 }
             }
@@ -133,9 +133,9 @@ public class TestService {
         }
 
 
-        if (updateTestDto.getNewDuration() != null) {
-            if (!updateTestDuration(updateTestDto.getNewDuration(), test)) {
-                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Duration format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
+        if (updateTestDto.getNewFinishingHour() != null) {
+            if (!updateFinishingHour(updateTestDto.getNewFinishingHour(), test)) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Finishing hour format should be HH:mm and be in a valid timeframe"), HttpStatus.BAD_REQUEST);
             }
         }
         if (updateTestDto.getNewStartingHour() != null) {
@@ -262,7 +262,7 @@ public class TestService {
         }
     }
 
-    private boolean canSubmitAnswer(Duration duration, LocalTime startingHour, LocalDate testDate) {
+    private boolean canSubmitAnswer(LocalTime startingHour, LocalTime finishingHour, LocalDate testDate) {
 
         if (LocalDate.now().getYear() != testDate.getYear()) {
             return false;
@@ -274,7 +274,6 @@ public class TestService {
             return false;
         }
 
-       
 
         if (LocalTime.now().isBefore(startingHour))
             return false;
@@ -283,9 +282,9 @@ public class TestService {
         return true;
     }
 
-    private boolean updateTestDuration(String duration, Test test) {
+    private boolean updateFinishingHour(String finishingHour, Test test) {
         try {
-            test.setDuration(LocalTime.parse(duration));
+            test.setFinishingHour(LocalTime.parse(finishingHour));
             return true;
         } catch (Exception e) {
             return false;

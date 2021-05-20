@@ -20,6 +20,6 @@ public class TestDto {
 
     private String startingHour;
 
-    private String duration;
+    private String finishingHour;
 
 }
