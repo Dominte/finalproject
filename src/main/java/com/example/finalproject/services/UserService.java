@@ -66,7 +66,7 @@ public class UserService {
                     .password(StringHash.encode(password)).build();
 
             LoginDto loginDto = new LoginDto();
-            loginDto.setUsername(username);
+            loginDto.setUsername(username + increment);
             loginDto.setPassword(password);
 
             userRepository.save(user);
@@ -78,11 +78,10 @@ public class UserService {
     }
 
     @SneakyThrows
-    public ResponseEntity<?> getUser(Long userId){
+    public ResponseEntity<?> getUser(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
-        }
-
+        }   
 
         try {
 
@@ -95,8 +94,6 @@ public class UserService {
                     .username(user.getUsername())
                     .registrationCode(user.getRegistrationCode())
                     .build();
-
-
 
             return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
         } catch (Exception e) {
@@ -154,7 +151,8 @@ public class UserService {
         if (userRepository.findUserByUsername(loginDto.getUsername()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Wrong username or password"), HttpStatus.CONFLICT);
         }
-        if (!userRepository.findUserByUsername(loginDto.getUsername()).get().getPassword().equals(loginDto.getPassword())) {
+
+        if (!userRepository.findUserByUsername(loginDto.getUsername()).get().getPassword().equals(StringHash.encode(loginDto.getPassword()))) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Wrong username or password"), HttpStatus.CONFLICT);
         }
 
