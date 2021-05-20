@@ -49,4 +49,10 @@ public class TestController {
         return testService.updateTest(updateTestDto, token);
     }
 
+    @DeleteMapping("")
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> deleteTest(@RequestParam Long testId , @RequestHeader(name = "Authorization") String token){
+        return testService.deleteTest(testId,token);
+    }
+
 }

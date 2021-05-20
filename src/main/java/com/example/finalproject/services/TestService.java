@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -195,12 +196,38 @@ public class TestService {
         }
     }
 
+    @Modifying
+    @Transactional
+    @SneakyThrows
+    public ResponseEntity<ResponseDto> deleteTest(Long testId, String token) {
+        token = token.substring(7);
+
+        if (testRepository.findById(testId).isEmpty()) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        Test test = testRepository.findById(testId).get();
+
+        if (!test.getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "You do not own this test"), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+
+            testRepository.delete(test);
+
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Deleted test successfully"), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @Modifying
     @Transactional
     @SneakyThrows
     public ResponseEntity<ResponseDto> assignStudentToTest(AssignStudentDto assignStudentDto, String token) {
-        token=token.substring(7);
+        token = token.substring(7);
 
         if (userRepository.findUserByRegistrationCode(assignStudentDto.getStudentRegistrationCode()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Student does not exist"), HttpStatus.BAD_REQUEST);
@@ -212,7 +239,7 @@ public class TestService {
 
         Test test = testRepository.findById(assignStudentDto.getTestId()).get();
 
-        if (test.getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
+        if (!test.getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "You do not own this test"), HttpStatus.BAD_REQUEST);
         }
 
@@ -233,6 +260,27 @@ public class TestService {
             e.printStackTrace();
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private boolean canSubmitAnswer(Duration duration, LocalTime startingHour, LocalDate testDate) {
+
+        if (LocalDate.now().getYear() != testDate.getYear()) {
+            return false;
+        }
+        if (LocalDate.now().getMonth() != testDate.getMonth()) {
+            return false;
+        }
+        if (LocalDate.now().getDayOfMonth() != testDate.getDayOfMonth()) {
+            return false;
+        }
+
+       
+
+        if (LocalTime.now().isBefore(startingHour))
+            return false;
+
+
+        return true;
     }
 
     private boolean updateTestDuration(String duration, Test test) {
