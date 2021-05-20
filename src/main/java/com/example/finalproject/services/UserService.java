@@ -6,6 +6,7 @@ import com.example.finalproject.models.User;
 import com.example.finalproject.repositories.UserRepository;
 import com.example.finalproject.utils.GeneratePassword;
 import com.example.finalproject.utils.JwtTokenUtil;
+import com.example.finalproject.utils.StringHash;
 import com.example.finalproject.utils.UserRole;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class UserService {
     }
 
     @SneakyThrows
-    public ResponseEntity<ResponseDto> registerUser(RegisterDto registerDto) {
+    public ResponseEntity<?> registerUser(RegisterDto registerDto) {
         if (userRepository.findUserByEmail(registerDto.getEmail()).isPresent()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Email is not unique"), HttpStatus.CONFLICT);
         }
@@ -53,6 +54,8 @@ public class UserService {
 
 
         try {
+            String password = GeneratePassword.generate(20);
+
             User user = User.builder()
                     .firstName(registerDto.getFirstName().trim())
                     .lastName(registerDto.getLastName().trim())
@@ -60,10 +63,14 @@ public class UserService {
                     .registrationCode(registerDto.getRegistrationCode().trim())
                     .role(registerDto.getRole())
                     .username(username + increment)
-                    .password(GeneratePassword.generate(20)).build();
+                    .password(StringHash.encode(password)).build();
+
+            LoginDto loginDto = new LoginDto();
+            loginDto.setUsername(username);
+            loginDto.setPassword(password);
 
             userRepository.save(user);
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "User registered successfully"), HttpStatus.CREATED);
+            return new ResponseEntity<>(loginDto, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
@@ -88,6 +95,8 @@ public class UserService {
                     .username(user.getUsername())
                     .registrationCode(user.getRegistrationCode())
                     .build();
+
+
 
             return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
         } catch (Exception e) {
