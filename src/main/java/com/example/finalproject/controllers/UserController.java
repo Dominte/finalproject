@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping("")
     @SneakyThrows
-    public ResponseEntity<?> getUser(@RequestParam Long userId){
+    public ResponseEntity<?> getUser(@RequestParam Long userId) {
         return userService.getUser(userId);
     }
 
@@ -47,8 +47,8 @@ public class UserController {
     }
 
     @PutMapping("/update/role")
-    public ResponseEntity<ResponseDto> modifyRole(@RequestBody @Validated UpdateRoleDto updateRoleDto) {
-        return userService.modifyRole(updateRoleDto);
+    public ResponseEntity<ResponseDto> modifyRole(@RequestBody @Validated UpdateRoleDto updateRoleDto, @RequestHeader(name = "Authorization") String token) {
+        return userService.modifyRole(updateRoleDto,token);
     }
 
     @PostMapping("/login")

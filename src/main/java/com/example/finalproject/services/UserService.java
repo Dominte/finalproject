@@ -81,7 +81,7 @@ public class UserService {
     public ResponseEntity<?> getUser(Long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
-        }   
+        }
 
         try {
 
@@ -167,9 +167,15 @@ public class UserService {
     }
 
     @SneakyThrows
-    public ResponseEntity<ResponseDto> modifyRole(UpdateRoleDto updateRoleDto) {
+    public ResponseEntity<ResponseDto> modifyRole(UpdateRoleDto updateRoleDto, String token) {
+        token = token.substring(7);
+
         if (userRepository.findUserByRegistrationCode(updateRoleDto.getRegistrationCode()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "User does not exist"), HttpStatus.CONFLICT);
+        }
+
+        if(jwtTokenUtil.getUsernameFromToken(token).equals(userRepository.findUserByRegistrationCode(updateRoleDto.getRegistrationCode()).get().getUsername())){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Cannot change your own role"), HttpStatus.CONFLICT);
         }
 
         for (UserRole role : UserRole.values()) {
