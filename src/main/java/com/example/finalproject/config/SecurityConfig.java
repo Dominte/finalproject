@@ -60,8 +60,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/v1/user/login").permitAll()
-                .antMatchers("/v1/user/register").hasAuthority("ADMIN")
+                .authorizeRequests()
+                .antMatchers("/v1/user/login").permitAll()
+                .antMatchers("/v1/user/register").permitAll()
+//                .antMatchers("/v1/user/register").hasAuthority("ADMIN")
                 .antMatchers("/v1/user/update/password").access("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
                 .antMatchers("/v1/user/update/role").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/v1/user").hasAuthority("ADMIN")
