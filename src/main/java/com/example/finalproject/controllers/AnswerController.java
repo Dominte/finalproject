@@ -9,10 +9,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/answer")
@@ -27,7 +24,7 @@ public class AnswerController {
 
     @PostMapping("/add")
     @SneakyThrows
-    public ResponseEntity<ResponseDto> submitAnswer(@RequestBody @Validated SubmitAnswerDto submitAnswerDto){
-        return answerService.submitAnswer(submitAnswerDto);
+    public ResponseEntity<?> submitAnswer(@RequestBody @Validated SubmitAnswerDto submitAnswerDto,@RequestHeader(name = "Authorization") String token){
+        return answerService.submitAnswer(submitAnswerDto,token);
     }
 }

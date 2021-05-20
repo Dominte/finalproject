@@ -76,19 +76,23 @@ public class TestService {
         if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Teacher does not exist"), HttpStatus.BAD_REQUEST);
         }
+        try {
+            if (!dateMatcher.matches(testDto.getTestDate())) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
+            }
 
-        if (!dateMatcher.matches(testDto.getTestDate())) {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Date format should be yyyy-mm-dd"), HttpStatus.BAD_REQUEST);
+            if (testRepository.findTestByNameAndDate(testDto.getTitle(), LocalDate.parse(testDto.getTestDate())).isPresent()) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Test already exists on that date"), HttpStatus.CONFLICT);
+            }
+
+            if (LocalDate.parse(testDto.getTestDate()).compareTo(LocalDate.now()) < 0) {
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
+            }
         }
+        catch (Exception e){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Could not parse date"), HttpStatus.I_AM_A_TEAPOT);
 
-        if (testRepository.findTestByNameAndDate(testDto.getTitle(), LocalDate.parse(testDto.getTestDate())).isPresent()) {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Test already exists on that date"), HttpStatus.CONFLICT);
         }
-
-        if (LocalDate.parse(testDto.getTestDate()).compareTo(LocalDate.now()) < 0) {
-            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
-        }
-
         try {
             Test test;
             test = Test.builder()
@@ -260,26 +264,6 @@ public class TestService {
             e.printStackTrace();
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    private boolean canSubmitAnswer(LocalTime startingHour, LocalTime finishingHour, LocalDate testDate) {
-
-        if (LocalDate.now().getYear() != testDate.getYear()) {
-            return false;
-        }
-        if (LocalDate.now().getMonth() != testDate.getMonth()) {
-            return false;
-        }
-        if (LocalDate.now().getDayOfMonth() != testDate.getDayOfMonth()) {
-            return false;
-        }
-
-
-        if (LocalTime.now().isBefore(startingHour))
-            return false;
-
-
-        return true;
     }
 
     private boolean updateFinishingHour(String finishingHour, Test test) {

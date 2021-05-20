@@ -21,5 +21,4 @@ public class SubmitAnswerDto {
 
     private Long testId;
 
-    private String studentRegistrationCode;
 }

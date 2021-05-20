@@ -134,12 +134,12 @@ public class UserService {
         if (userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Student does not exist"), HttpStatus.CONFLICT);
         }
-        if (!userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get().getPassword().equals(updatePasswordDto.getPassword())) {
+        if (!userRepository.findUserByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token)).get().getPassword().equals(StringHash.encode(updatePasswordDto.getPassword()))) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Password does not match"), HttpStatus.CONFLICT);
         }
 
         try {
-            userRepository.setPasswordByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token), updatePasswordDto.getNewPassword());
+            userRepository.setPasswordByRegistrationCode(jwtTokenUtil.getRegistrationCodeFromToken(token), StringHash.encode(updatePasswordDto.getNewPassword()));
             return new ResponseEntity<>(new ResponseDto(HttpStatus.ACCEPTED, "Password has been changed successfully"), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Something went wrong"), HttpStatus.BAD_REQUEST);
