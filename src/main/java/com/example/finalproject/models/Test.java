@@ -38,7 +38,7 @@ public class Test {
     private LocalTime startingHour;
 
     @JsonFormat(pattern = "HH:mm")
-    @Column(name = "duration")
+    @Column(name = "finish_hour")
     private LocalTime duration;
 
     @JsonFormat(pattern="yyyy-MM-dd")
