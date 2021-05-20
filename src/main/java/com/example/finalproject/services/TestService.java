@@ -1,8 +1,11 @@
 package com.example.finalproject.services;
 
 import com.example.finalproject.dtos.*;
+import com.example.finalproject.models.Question;
 import com.example.finalproject.models.Test;
 import com.example.finalproject.models.User;
+import com.example.finalproject.repositories.AnswerRepository;
+import com.example.finalproject.repositories.QuestionRepository;
 import com.example.finalproject.repositories.TestRepository;
 import com.example.finalproject.repositories.UserRepository;
 import com.example.finalproject.utils.FormattedDateMatcher;
@@ -27,13 +30,17 @@ public class TestService {
     private TestRepository testRepository;
     private UserRepository userRepository;
     private JwtTokenUtil jwtTokenUtil;
+    private QuestionRepository questionRepository;
+    private AnswerRepository answerRepository;
     private final FormattedDateMatcher dateMatcher = new FormattedDateMatcher();
 
     @Autowired
-    public TestService(TestRepository testRepository, JwtTokenUtil jwtTokenUtil, UserRepository userRepository) {
+    public TestService(AnswerRepository answerRepository, QuestionRepository questionRepository, TestRepository testRepository, JwtTokenUtil jwtTokenUtil, UserRepository userRepository) {
         this.userRepository = userRepository;
         this.jwtTokenUtil = jwtTokenUtil;
         this.testRepository = testRepository;
+        this.questionRepository = questionRepository;
+        this.answerRepository = answerRepository;
     }
 
     @SneakyThrows
@@ -88,8 +95,7 @@ public class TestService {
             if (LocalDate.parse(testDto.getTestDate()).compareTo(LocalDate.now()) < 0) {
                 return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Can't set test date in the past"), HttpStatus.I_AM_A_TEAPOT);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Could not parse date"), HttpStatus.I_AM_A_TEAPOT);
 
         }
@@ -131,11 +137,18 @@ public class TestService {
         }
 
         Test test = testRepository.findById(updateTestDto.getTestId()).get();
+        
+        ArrayList<Question> questionsDb = (ArrayList<Question>) questionRepository.findAllByTestId(updateTestDto.getTestId());
+
+        for(Question question:questionsDb){
+            if(!answerRepository.findAnswersByQuestionId(question.getId()).isEmpty()){
+                return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "This tests already has answers"), HttpStatus.CONFLICT);
+            }
+        }
 
         if (!testRepository.findById(updateTestDto.getTestId()).get().getTeacher().getRegistrationCode().equals(jwtTokenUtil.getRegistrationCodeFromToken(token))) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "You do not own this test"), HttpStatus.CONFLICT);
         }
-
 
         if (updateTestDto.getNewFinishingHour() != null) {
             if (!updateFinishingHour(updateTestDto.getNewFinishingHour(), test)) {
@@ -182,6 +195,12 @@ public class TestService {
 
         if (testRepository.findById(signupTestDto.getTestId()).isEmpty()) {
             return new ResponseEntity<>(new ResponseDto(HttpStatus.BAD_REQUEST, "Test does not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        User student = userRepository.findUserByUsername(jwtTokenUtil.getUsernameFromToken(token)).get();
+        
+        if(testRepository.findById(signupTestDto.getTestId()).get().getStudents().contains(student)){
+            return new ResponseEntity<>(new ResponseDto(HttpStatus.CONFLICT, "Already assigned to this test"), HttpStatus.CONFLICT);
         }
 
         try {
