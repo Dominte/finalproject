@@ -1,0 +1,508 @@
+{
+	"info": {
+		"_postman_id": "53455bb9-bd53-4a78-b10d-e73348ae1f31",
+		"name": "Softbinator Labs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get questions from test",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/question?testId=7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"question"
+					],
+					"query": [
+						{
+							"key": "testId",
+							"value": "7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tests created by you",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9mZXNvci5wcm9mZXNvcjEiLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJURUFDSEVSIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjIxMTExMTExMSIsImV4cCI6MTYyMTUxNDMzMCwiaWF0IjoxNjIxNDk2MzMwfQ.p2SI4Ze703Nf9yOa9TuqhvRoZuVEFLqtnWrLXoK5B8TBQNJtpUuRaC8R1_xkYKdCHoUvwyODYmQ39dF2MCx1rg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/test/created",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"test",
+						"created"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb21pbnRlLmZsb3JpbiIsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyMzEyMzFSU0wzMjEzMTIiLCJleHAiOjE2MjEzNzA2ODQsImlhdCI6MTYyMTM1MjY4NH0.JdFEa2c3MpPPZattCOBCqVsRwK9FK_Cr-n2cf9BB_ymDAKKy7riM8BbiT_UuE1tTp5RobQdUGRN-aKNFtFm1Pg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/user?userId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register an user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb21pbnRlLmZsb3JpbiIsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyMzEyMzFSU0wzMjEzMTIiLCJleHAiOjE2MjEyODI3ODcsImlhdCI6MTYyMTI2NDc4N30.ZWjH-Wvtes1MEr1XiXH0vdCUtHEgCS1gvfJJo-FFEOPcJebrx86JK1I_XP9xG--DaLHEX5DM-6VkqfFYOQAb5Q",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"student\",\r\n    \"lastName\" : \"student\",\r\n    \"email\":\"student@uaic.ro\",\r\n    \"registrationCode\" : \"312312RSL321312\",\r\n    \"role\" : \"STUDENT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/user/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9mZXNvci5wcm9mZXNvcjEiLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJURUFDSEVSIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyNDNSU0wxMTIzIiwiZXhwIjoxNjIxNTUxMDk1LCJpYXQiOjE2MjE1MzMwOTV9.oMJ4ZQng1yXJx50w9goJ8OiNQxNBso_U2zyEwpFzEdIgbRkbySfXF20-0m70pPkh4qsOe0D5i9WcawqgpQyWNQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\" : \"LFAC\",\r\n    \"testDate\" : \"2022-05-19\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/test/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"test",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assign test to a student",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"studentRegistrationCode\" : \"111\",\r\n    \"testTitle\" : \"2\",\r\n    \"testDay\" : \"2021-12-12\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/test/assign",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"test",
+						"assign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signup to test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50LnN0dWRlbnQxIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwicmVnaXN0cmF0aW9uX2NvZGUiOiIzMTIzMTJSU0wzMjEzMTIiLCJleHAiOjE2MjE1NjIzODAsImlhdCI6MTYyMTU0NDM4MH0.IBuBzjaQo-UVRCTJco0rb_0jC_j4aT2H-ztn7bbnKZ-6TyBx6g665bGRPE32_7Gdi-PnesTxu-JaiZEZjfteaQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testId\" : 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/test/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"test",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add question to test",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9mZXNvci5wcm9mZXNvcjEiLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJURUFDSEVSIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyNDNSU0wxMTIzIiwiZXhwIjoxNjIxNTUxMDk1LCJpYXQiOjE2MjE1MzMwOTV9.oMJ4ZQng1yXJx50w9goJ8OiNQxNBso_U2zyEwpFzEdIgbRkbySfXF20-0m70pPkh4qsOe0D5i9WcawqgpQyWNQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testId\" : \"2\",\r\n    \"text\" : \"Automat\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/question/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"question",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add answer to question",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50LnN0dWRlbnQxIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwicmVnaXN0cmF0aW9uX2NvZGUiOiIzMTIzMTJSU0wzMjEzMTIiLCJleHAiOjE2MjE1NTE1OTUsImlhdCI6MTYyMTUzMzU5NX0.4JmqdrSJAzkBh2CCoZd4uwsTTqTZZvaXzgMegubMpNctgWYMIoiWS0NDolYB9EmpDw85CayWqxdMgQGsoDBxQQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"questionIndex\": \"1\",\r\n    \"text\": \"Raspuns generic\",\r\n    \"testId\": \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/answer/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"answer",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZDJtaW4uYWRtaTEybjIyIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiQURNSU4ifV0sInJlZ2lzdHJhdGlvbl9jb2RlIjoiMjEyMTExMjMzMjExMzJSMVNMMTEzMzExIiwiZXhwIjoxNjIxNTQxNjk0LCJpYXQiOjE2MjE1MjM2OTR9.35FIUUgkUl79ACrSNhmuV2LZod1KUC5EQXlt44Tryo-EYS3eocLsnXefpIhIDUXvwWhst-wS1gmvr80ueF6gvA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"student.student1\",\r\n    \"password\": \"pass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update password for user",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzdHVkZW50LnN0dWRlbnQxIiwicm9sZSI6W3siYXV0aG9yaXR5IjoiU1RVREVOVCJ9XSwicmVnaXN0cmF0aW9uX2NvZGUiOiIzMTIzMTJSU0wzMjEzMTIiLCJleHAiOjE2MjE1NTE1OTUsImlhdCI6MTYyMTUzMzU5NX0.4JmqdrSJAzkBh2CCoZd4uwsTTqTZZvaXzgMegubMpNctgWYMIoiWS0NDolYB9EmpDw85CayWqxdMgQGsoDBxQQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"registrationCode\" : \"312312RSL321312\",\r\n    \"password\" : \"3ZGQ2gFinnE30moJXDzy\",\r\n    \"newPassword\" : \"pass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/user/update/password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user",
+						"update",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update role for user",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb21pbnRlLmZsb3JpbiIsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyMzEyMzFSU0wzMjEzMTIiLCJleHAiOjE2MjEyODI5NTgsImlhdCI6MTYyMTI2NDk1OH0.wJ32GBbCiti6bHIvCar8Ec756SCgLrzYDG5pR6ghTbIwlXPtMWYWqjl7ALt8Za2urt47T3vKDR-uizBT7D1XQQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"registrationCode\" : \"11111111\",\r\n    \"role\" : \"ADMIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/user/update/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user",
+						"update",
+						"role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update test",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9mZXNvci5wcm9mZXNvcjEiLCJyb2xlIjpbeyJhdXRob3JpdHkiOiJURUFDSEVSIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyNDNSU0wxMTIzIiwiZXhwIjoxNjIxNTUxMDk1LCJpYXQiOjE2MjE1MzMwOTV9.oMJ4ZQng1yXJx50w9goJ8OiNQxNBso_U2zyEwpFzEdIgbRkbySfXF20-0m70pPkh4qsOe0D5i9WcawqgpQyWNQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"testId\" : 1,\r\n    \"newTestDate\": \"2022-05-20\",\r\n    \"newStartingHour\": \"12:00\",\r\n    \"newFinishingHour\": \"23:00\",\r\n    \"newTitle\": \"Machine Learning\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/test/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"test",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete user",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkb21pbnRlLmZsb3JpbiIsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn1dLCJyZWdpc3RyYXRpb25fY29kZSI6IjEyMzEyMzFSU0wzMjEzMTIiLCJleHAiOjE2MjEzNzA2ODQsImlhdCI6MTYyMTM1MjY4NH0.JdFEa2c3MpPPZattCOBCqVsRwK9FK_Cr-n2cf9BB_ymDAKKy7riM8BbiT_UuE1tTp5RobQdUGRN-aKNFtFm1Pg",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/user?userId=9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"user"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "9"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
